@@ -11,15 +11,15 @@ services:
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@172.18.0.2:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@10.11.0.2:9093
       - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.18.0.2:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://10.11.0.2:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:
       kafka_network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 10.11.0.2
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -29,12 +29,12 @@ services:
     environment:
       DYNAMIC_CONFIG_ENABLED: 'true'
       KAFKA_CLUSTERS_0_NAME: wizard_test
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 172.18.0.2:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 10.11.0.2:9092
     depends_on:
       - kafka
     networks:
       kafka_network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 10.11.0.3
 
 volumes:
   kafka_data:
@@ -42,8 +42,4 @@ volumes:
 
 networks:
   kafka_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: "172.18.0.0/16"
-          gateway: "172.18.0.1"
+    external: true
