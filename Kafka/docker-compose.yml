@@ -18,7 +18,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:
-      my_network:
+      kafka_network:
         ipv4_address: 172.18.0.2
 
   kafka-ui:
@@ -41,7 +41,7 @@ volumes:
     driver: local
 
 networks:
-  my_network:
+  kafka_network:
     driver: bridge
     ipam:
       config:
