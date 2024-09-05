@@ -1,41 +1,49 @@
-# Copyright Broadcom, Inc. All Rights Reserved.
-# SPDX-License-Identifier: APACHE-2.0
-#https://github.com/bitnami/containers/blob/main/bitnami/kafka/3.8/debian-12/docker-compose.yml
-version: '3.8'
-
+version: '3'
 services:
   kafka:
-    image: docker.io/bitnami/kafka:3.8
+    image: bitnami/kafka:3.8
     container_name: kafka
     ports:
-      - "9092:9092"  # Kafka broker port
-      - "9093:9093"  # Controller port
+      - "9092:9092"
+      - "9093:9093"
     volumes:
       - "kafka_data:/bitnami"
     environment:
-      # KRaft settings
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      # Listeners
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@172.18.0.2:9093
       - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://172.18.0.2:9092
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.2
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     ports:
-      - "8080:8080"  # Kafka UI port
+      - "8080:8080"
     environment:
       DYNAMIC_CONFIG_ENABLED: 'true'
       KAFKA_CLUSTERS_0_NAME: wizard_test
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 172.18.0.2:9092
     depends_on:
       - kafka
+    networks:
+      my_network:
+        ipv4_address: 172.18.0.3
 
 volumes:
   kafka_data:
     driver: local
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.18.0.0/16"
+          gateway: "172.18.0.1"
