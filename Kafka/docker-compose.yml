@@ -33,7 +33,7 @@ services:
     depends_on:
       - kafka
     networks:
-      my_network:
+      kafka_network:
         ipv4_address: 172.18.0.3
 
 volumes:
