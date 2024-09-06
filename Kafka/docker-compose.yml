@@ -49,9 +49,20 @@ services:
     networks:
     - webnet
 
+
+  certbot:
+    build: ./certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./var/lib/letsencrypt:/var/lib/letsencrypt
+    entrypoint: "/bin/sh -c 'certbot renew && nginx -s reload'"
+
+
 volumes:
   kafka_data:
     driver: local
+  cert:
+  var:
 
 networks:
   kafka_network:

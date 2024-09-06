@@ -1,10 +1,10 @@
 #!/bin/bash
 #
-# DON'T FORGET to set:   chmod +x systemd-setting-kafka.sh
+# DON'T FORGET to set:   chmod +x system-setting-kafka.sh
 #
 SERVICE_NAME="kafka"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-WORKING_DIR="/home/volodymyr/docker_files/kafka"
+WORKING_DIR="/opt/docker/kafka"
 DOCKER_COMPOSE_PATH="/usr/local/bin/docker-compose"
 
 
@@ -36,3 +36,6 @@ sudo systemctl start ${SERVICE_NAME}
 
 echo "Service file created and service started: ${SERVICE_NAME}"
 
+
+#CERT-BOT file
+chmod +x /opt/docker/kafka/renew-certificates.sh
