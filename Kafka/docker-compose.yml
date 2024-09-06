@@ -50,8 +50,7 @@ services:
       - ./html:/usr/share/nginx/html
       - /etc/nginx/ssl:/etc/nginx/ssl
     networks:
-      webnet:
-        ipv4_address: 10.11.0.255
+      - webnet
 
   certbot:
     build:
