@@ -62,7 +62,6 @@ services:
       - ./var/log/letsencrypt:/var/log/letsencrypt
     depends_on:
       - nginx
-    entrypoint: "/usr/local/bin/renew-certificates.sh"
 
 volumes:
   kafka_data:

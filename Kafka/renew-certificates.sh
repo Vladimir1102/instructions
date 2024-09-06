@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# Обновление сертификатов
-certbot renew
+# Начальное создание сертификатов
+certbot --nginx -d kafka.devspace-eterintekafka.com -d www.kafka.devspace-eterinte.com --non-interactive --agree-tos --email info@devspace-eterinte.com
 
-# Перезагрузка Nginx, если сертификаты обновились
-if [ $? -eq 0 ]; then
-    nginx -s reload
-fi
+# Обновление сертификатов
+certbot renew --quiet
+
+# Перезагрузка Nginx
+nginx -s reload
