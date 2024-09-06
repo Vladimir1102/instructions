@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# DON'T FORGET to set:   chmod +x
+# DON'T FORGET to set:   chmod +x systemd-setting-kafka.sh
 #
 SERVICE_NAME="kafka"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"

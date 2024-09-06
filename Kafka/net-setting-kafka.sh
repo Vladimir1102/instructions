@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# DON'T FORGET to set:   chmod +x
+# DON'T FORGET to set:   chmod +x net-setting-kafka.sh
 #
 
 
