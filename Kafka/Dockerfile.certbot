@@ -1,0 +1,13 @@
+# Используем официальный образ Certbot
+FROM certbot/certbot
+
+# Устанавливаем Certbot для обновления сертификатов
+RUN apt-get update && \
+    apt-get install -y cron
+
+# Копируем скрипт для обновления сертификатов
+COPY renew-certificates.sh /usr/local/bin/renew-certificates.sh
+RUN chmod +x /usr/local/bin/renew-certificates.sh
+
+# Запускаем Cron для регулярного обновления сертификатов
+CMD ["cron", "-f"]

@@ -37,32 +37,36 @@ services:
         ipv4_address: 10.11.0.3
 
   nginx:
-    image: nginx:stable
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
     container_name: nginx
     ports:
       - "80:80"
       - "443:443"
     volumes:
-    - ./nginx.conf:/etc/nginx/nginx.conf
-    - ./html:/usr/share/nginx/html
-    - /etc/nginx/ssl:/etc/nginx/ssl  # Для SSL сертификатов
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./html:/usr/share/nginx/html
+      - /etc/nginx/ssl:/etc/nginx/ssl
     networks:
-    - webnet
-
+      - webnet
 
   certbot:
-    build: ./certbot
+    build:
+      context: .
+      dockerfile: Dockerfile.certbot
+    container_name: certbot
     volumes:
       - ./certs:/etc/letsencrypt
       - ./var/lib/letsencrypt:/var/lib/letsencrypt
-    entrypoint: "/bin/sh -c 'certbot renew && nginx -s reload'"
-
+      - ./var/log/letsencrypt:/var/log/letsencrypt
+    depends_on:
+      - nginx
+    entrypoint: "/usr/local/bin/renew-certificates.sh"
 
 volumes:
   kafka_data:
     driver: local
-  cert:
-  var:
 
 networks:
   kafka_network:
