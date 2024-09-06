@@ -1,10 +1,9 @@
 #!/bin/sh
 
-# Начальное создание сертификатов
-certbot --nginx -d kafka.devspace-eterintekafka.com -d www.kafka.devspace-eterinte.com --non-interactive --agree-tos --email info@devspace-eterinte.com
-
-# Обновление сертификатов
-certbot renew --quiet
-
-# Перезагрузка Nginx
-nginx -s reload
+while true; do
+    echo "Attempting to renew certificates..."
+    certbot renew
+    echo "Certificates renewed. Reloading Nginx..."
+    nginx -s reload
+    sleep 1200h
+done

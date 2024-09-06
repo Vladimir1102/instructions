@@ -1,4 +1,5 @@
-version: '3'
+version: '3.8'
+
 services:
   kafka:
     image: bitnami/kafka:3.8
@@ -18,7 +19,7 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     networks:
-      kafka_network:
+      network:
         ipv4_address: 10.11.0.2
 
   kafka-ui:
@@ -33,7 +34,7 @@ services:
     depends_on:
       - kafka
     networks:
-      kafka_network:
+      network:
         ipv4_address: 10.11.0.3
 
   nginx:
@@ -49,7 +50,8 @@ services:
       - ./html:/usr/share/nginx/html
       - /etc/nginx/ssl:/etc/nginx/ssl
     networks:
-      - webnet
+      webnet:
+        ipv4_address: 10.11.0.255
 
   certbot:
     build:
@@ -62,12 +64,19 @@ services:
       - ./var/log/letsencrypt:/var/log/letsencrypt
     depends_on:
       - nginx
+    networks:
+      - webnet
 
 volumes:
   kafka_data:
     driver: local
 
 networks:
-  kafka_network:
-    external: true
+  network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.11.0.0/16
+          gateway: 10.11.0.1
   webnet:
+    driver: bridge
