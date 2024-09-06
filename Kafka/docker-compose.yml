@@ -2,7 +2,6 @@ version: '3'
 services:
   kafka:
     image: bitnami/kafka:3.8
-    restart: always
     container_name: kafka
     ports:
       - "9092:9092"
@@ -24,7 +23,6 @@ services:
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    restart: always
     container_name: kafka-ui
     ports:
       - "8080:8080"

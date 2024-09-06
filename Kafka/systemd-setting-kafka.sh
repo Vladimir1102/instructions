@@ -18,12 +18,16 @@ After=docker.service
 WorkingDirectory=${WORKING_DIR}
 ExecStart=${DOCKER_COMPOSE_PATH} up -d
 ExecStop=${DOCKER_COMPOSE_PATH} down
-Restart=always
+Restart=on-failure
 RestartSec=5s
+
 
 [Install]
 WantedBy=multi-user.target
 EOF"
+sudo mkdir -p /opt/docker/${SERVICE_NAME}
+sudo chown -R root:root /opt/docker/${SERVICE_NAME}
+sudo chmod -R 700 /srv/docker/${SERVICE_NAME}
 
 # Перезагрузите конфигурацию systemd и активируйте сервис
 sudo systemctl daemon-reload
