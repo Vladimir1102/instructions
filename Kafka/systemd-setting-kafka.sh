@@ -39,3 +39,4 @@ echo "Service file created and service started: ${SERVICE_NAME}"
 
 #CERT-BOT file
 chmod +x /opt/docker/kafka/renew-certificates.sh
+chmod +x /opt/docker/kafka/setup-certificates.sh
