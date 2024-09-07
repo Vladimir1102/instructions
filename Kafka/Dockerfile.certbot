@@ -1,9 +1,0 @@
-# Используем официальный образ Certbot
-FROM certbot/certbot
-
-# Копируем скрипт для обновления сертификатов
-COPY renew-certificates.sh /usr/local/bin/renew-certificates.sh
-RUN chmod +x /usr/local/bin/renew-certificates.sh
-
-# Запускаем скрипт обновления сертификатов
-CMD ["/usr/local/bin/renew-certificates.sh"]

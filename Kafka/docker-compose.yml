@@ -1,67 +1,21 @@
-version: '3.8'
-
 services:
   kafka:
-    image: confluentinc/cp-kafka:latest
-    restart: always
+    image: bitnami/kafka
+    user: root
     container_name: kafka
     ports:
-      - "9092:9092"
-      - "9093:9093"
-    volumes:
-      - "kafka_data:/var/lib/kafka/data"
+      - 9092:9092
     environment:
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://10.10.0.2:9092
-      - KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE=false
-      - KAFKA_BROKER_ID=0
-      - KAFKA_CONTROLLER_QUORUM_VOTERS=0@10.10.0.2:9093
-      - KAFKA_LISTENER_NAME=PLAINTEXT
-    networks:
-      doc_network:
-        ipv4_address: 10.10.0.2
-
-  redpanda-console:
-    image: docker.redpanda.com/vectorized/console:latest
-    restart: always
-    container_name: redpanda-console
-    ports:
-      - "8080:8080"
-    environment:
-      - KAFKA_BROKERS=10.10.0.2:9092
-    depends_on:
-      - kafka
-    networks:
-      doc_network:
-        ipv4_address: 10.10.0.30
-
-  nginx:
-    image: vladimir1102/nginx:auth-plus
-    restart: always
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - redpanda-console
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:2181
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./html:/usr/share/nginx/html
-      - /etc/nginx/ssl:/etc/nginx/ssl
-      - ./nginx/.htpasswd:/etc/nginx/.htpasswd
-    networks:
-      doc_network:
-        ipv4_address: 10.10.0.4
-
-volumes:
-  kafka_data:
-    driver: local
-
-networks:
-  doc_network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 10.10.0.0/16
-          gateway: 10.10.0.1
+      - ./kafka:/bitnami/kafka
