@@ -1,7 +1,8 @@
 services:
   kafka:
     image: bitnami/kafka
-    user: root
+    restart: unless-stopped #always
+    #user: root
     container_name: kafka
     ports:
       - 9092:9092
