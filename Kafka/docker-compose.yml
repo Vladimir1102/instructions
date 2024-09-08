@@ -2,7 +2,7 @@ services:
   kafka:
     image: bitnami/kafka
     restart: unless-stopped #always
-    #user: root
+    user: root
     container_name: kafka
     ports:
       - 9092:9092
@@ -19,4 +19,4 @@ services:
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
     volumes:
-      - ./kafka:/bitnami/kafka
+      - /opt/docker/kafka/bitami/kafka:/bitnami/kafka
