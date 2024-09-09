@@ -17,9 +17,9 @@ services:
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_NODE_ID=1
-      - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
+      - KAFKA_KRAFT_CLUSTER_ID=ZjRkMzY5NTY4NWVmNDA1YT
     volumes:
-      - /opt/docker/kafka/bitami/kafka:/bitnami/kafka
+      - /opt/docker/kafka/bitnami/kafka:/bitnami/kafka
 
 
 # Generate KAFKA_KRAFT_CLUSTER_ID:      -
