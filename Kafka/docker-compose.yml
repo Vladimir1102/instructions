@@ -2,7 +2,6 @@ services:
   kafka:
     image: bitnami/kafka
     restart: unless-stopped
-    user: root
     container_name: kafka
     ports:
       - 9092:9092
@@ -29,5 +28,5 @@ services:
 
 # Generate KAFKA_KRAFT_CLUSTER_ID:      -
 # cat /proc/sys/kernel/random/uuid | tr -d '-' | base64 | cut -b 1-22
-#
-#
+# chmod -R 775 /opt/docker/kafka/bitnami
+# chown -R 1001:1001 /opt/docker/kafka/bitnami
