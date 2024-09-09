@@ -1,28 +1,25 @@
 services:
   kafka:
     image: bitnami/kafka
-    restart: unless-stopped
-    user: 1001:1001
+    restart: unless-stopped #always
+    user: root
     container_name: kafka
     ports:
       - 9092:9092
     environment:
       - KAFKA_ENABLE_KRAFT=yes
-      - KAFKA_KRAFT_CLUSTER_ID=ZjRkMzY5NTY4NWVmNDA1YT
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://51.195.102.141:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_LISTENER_NAME_TO_ADDRESS_MAP=PLAINTEXT:0.0.0.0:9092
-      - KAFKA_CFG_AUTHORIZER_CLASS_NAME=kafka.security.auth.SimpleAclAuthorizer
-      - KAFKA_CFG_ALLOW_EVERYONE_IF_NO_ACL_FOUND=false
-      - KAFKA_CFG_SASL_ENABLED_MECHANISMS=PLAIN
-      - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
-      - KAFKA_CFG_SECURITY_INTER_BROKER_PROTOCOL=PLAINTEXT
-      - KAFKA_CFG_SASL_JAAS_CONFIG=org.apache.kafka.common.security.plain.PlainLoginModule required username="dev-admin" password="EterinteOU777";
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:2181
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_KRAFT_CLUSTER_ID=MkU3OEVBNTcwNTJENDM2Qk
     volumes:
-      - /opt/docker/kafka/bitnami/kafka:/bitnami/kafka
+      - /opt/docker/kafka/bitami/kafka:/bitnami/kafka
 
 
 # Generate KAFKA_KRAFT_CLUSTER_ID:      -
