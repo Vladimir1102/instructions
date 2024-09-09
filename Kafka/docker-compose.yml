@@ -25,6 +25,7 @@ services:
     volumes:
       - /opt/docker/kafka/bitnami/kafka:/bitnami/kafka
       - /opt/docker/kafka/jaas:/bitnami/jaas
+      #- /opt/docker/kafka/config/server.properties:/opt/bitnami/kafka/config/server.properties
 
 # Generate KAFKA_KRAFT_CLUSTER_ID:      -
 # cat /proc/sys/kernel/random/uuid | tr -d '-' | base64 | cut -b 1-22
