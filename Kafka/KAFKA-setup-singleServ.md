@@ -87,7 +87,7 @@ kafka-run-class.sh найти и увеличить размер кучи (по 
 ```
 # Memory options
 if [ -z "$KAFKA_HEAP_OPTS" ]; then
-KAFKA_HEAP_OPTS="-Xmx512M -Xms1G"
+KAFKA_HEAP_OPTS="-512M -512M"
 fi
 ```
 
