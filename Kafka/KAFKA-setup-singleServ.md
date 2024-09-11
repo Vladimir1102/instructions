@@ -119,7 +119,7 @@ sudo systemctl status kafka
 --topic test-topic \
 --partitions 2 \
 --replication-factor 1 \
---config retention.ms=300000 \
+--config retention.ms=5000 \
 --config max.message.bytes=104857600 \
 --config segment.bytes=52428800
 ```
