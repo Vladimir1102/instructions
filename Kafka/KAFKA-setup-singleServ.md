@@ -108,6 +108,22 @@ sudo systemctl status kafka
 
 ```cat /home/kafka/kafka/logs/server.log```
 
+### EXAMPLE of new TOPIC:
+```
+# Создаем топик с параметрами:
+# - retention.ms=300000 (5 минут)
+# - max.message.bytes=104857600 (100 КБ)
+# - max.topic.size=52428800 (50 МБ)
+# Пример команды с описанием параметров
+./kafka-topics.sh --bootstrap-server localhost:9093 --create \
+--topic test-topic \
+--partitions 2 \
+--replication-factor 1 \
+--config retention.ms=300000 \
+--config max.message.bytes=104857600 \
+--config segment.bytes=52428800
+```
+
 
 
 Если каждый микросервис должен иметь доступ только к своему собственному топику, использование SSL в сочетании с аутентификацией на основе логина и пароля (SASL/PLAIN или SASL/SCRAM) может быть достаточно для обеспечения безопасного доступа к Kafka. В этом случае вам не нужно управлять сложными ACL, если:
@@ -173,5 +189,37 @@ sudo systemctl status kafka
 ### Заключение
 
 Использование SSL и SASL для управления доступом и шифрованием является хорошей практикой и может значительно упростить управление безопасностью, особенно в небольших и средних развертываниях. Это уменьшает необходимость в сложной настройке ACL, если доступ к топикам строго контролируется через аутентификацию и конфигурацию клиентов.
+
+Library for SSL clients: 
+
+https://github.com/confluentinc/librdkafka
+
+```sudo apt-get update
+sudo apt-get install libssl-dev
+export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+```
+
+
+Configure librdkafka client
+For each client copy its key files (client_${CLIENT}_*) and the public CA-cert to the client node and configure your librdkafka application with the following properties:
+
+
+```
+metadata.broker.list=at_least_one_of_the_brokers
+security.protocol=ssl
+
+# CA certificate file for verifying the broker's certificate.
+ssl.ca.location=ca-cert
+
+# Client's certificate
+ssl.certificate.location=client_?????_client.pem
+
+# Client's key
+ssl.key.location=client_?????_client.key
+
+# Key password, if any.
+ssl.key.password=abcdefgh
+```
 
 
