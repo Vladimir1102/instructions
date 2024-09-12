@@ -74,6 +74,14 @@ dev-orc777
 
 [zookeepre.properties](zookeepre.properties)
 
+#### **Конфигурация Consumer (`consumer.properties`):**
+
+[consumer.properties](consumer.properties)
+
+#### **Конфигурация Producer (`producer.properties`):**
+
+[producer.properties](producer.properties)
+
 ### **3. Проверка и Перезапуск**
 
 Проверьте, что все файлы находятся в нужной директории:
@@ -82,14 +90,7 @@ dev-orc777
 ls -l /home/kafka/kafka/ssl/
 ```
 
-kafka-run-class.sh найти и увеличить размер кучи (по умолчанию 256Мб):
 
-```
-# Memory options
-if [ -z "$KAFKA_HEAP_OPTS" ]; then
-KAFKA_HEAP_OPTS="-512M -512M"
-fi
-```
 
 
 Перезапустите Kafka и Zookeeper, чтобы применить новые конфигурации:
@@ -140,8 +141,8 @@ sudo systemctl status kafka
    **Конфигурация Kafka брокера (`server.properties`):**
 
    ```properties
-   listeners=SSL://localhost:9093
-   advertised.listeners=SSL://localhost:9093
+   listeners=SSL://localhost:9092
+   advertised.listeners=SSL://localhost:9092
    security.protocol=SSL
    ssl.keystore.location=/path/to/broker-keystore.p12
    ssl.keystore.password=your_keystore_password
@@ -173,8 +174,8 @@ sudo systemctl status kafka
    Используйте `kafka-acls.sh` для создания ACL, которые будут обеспечивать доступ только к нужным топикам для каждого пользователя. Например:
 
    ```bash
-   kafka-acls.sh --bootstrap-server localhost:9093 --add --allow-principal User:producer1 --operation Write --topic producer1-topic
-   kafka-acls.sh --bootstrap-server localhost:9093 --add --allow-principal User:consumer1 --operation Read --topic consumer1-topic
+   kafka-acls.sh --bootstrap-server localhost:9092 --add --allow-principal User:producer1 --operation Write --topic producer1-topic
+   kafka-acls.sh --bootstrap-server localhost:9092 --add --allow-principal User:consumer1 --operation Read --topic consumer1-topic
    ```
 
 3. **Проверка конфигураций и безопасности:**
