@@ -15,10 +15,11 @@ services:
       driver: "none"
     restart: unless-stopped
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - /opt/docker/wiki-js/db-data:/var/lib/postgresql/data  # Проброс данных Postgres
 
   wiki:
     image: ghcr.io/requarks/wiki:2
+    user: "root"
     depends_on:
       - db
     environment:
@@ -32,9 +33,8 @@ services:
     ports:
       - "8080:3000"
     volumes:
-      - wiki-data:/data  # Привязка к каталогу данных Wiki.js
+      - /opt/docker/wiki-js/data:/wiki/data  # Проброс каталога данных Wiki.js
+      - /opt/docker/wiki-js/backups:/wiki/data/back-up  # Проброс каталога бэкапов
+      - /opt/docker/wiki-js/assets:/wiki/public/assets # ico png pic
 
-volumes:
-  db-data:
-  wiki-data:
 ```
