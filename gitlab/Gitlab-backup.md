@@ -23,6 +23,42 @@ gitlab_rails['backup_upload_connection'] = {
 gitlab_rails['backup_upload_remote_directory'] = 'gitlab_backups'
 ```
 
+Вариант скрипта gitlab_backup.sh:
+
+```
+#!/bin/bash
+
+# Искомая часть имени контейнера
+search_term="eterinte_gitlab"
+
+# Ищем контейнеры, содержащие искомую часть имени
+container_name=$(docker ps --filter "name=${search_term}" --format "{{.Names}}" | head -n 1)
+
+# Проверяем, найден ли контейнер
+if [ -z "$container_name" ]; then
+echo "Контейнер с именем, содержащим '${search_term}', не найден."
+exit 1
+fi
+
+# Выводим полное имя контейнера
+echo "Найден контейнер: $container_name"
+
+# Выполняем команду бэкапа в контейнере
+echo "Запуск резервного копирования..."
+backup_output=$(docker exec -t "$container_name" gitlab-rake gitlab:backup:create 2>&1)
+
+# Проверяем статус выполнения команды бэкапа
+if [ $? -eq 0 ]; then
+echo "Резервное копирование выполнено успешно."
+else
+echo "Ошибка при выполнении резервного копирования."
+echo "$backup_output"
+exit 1
+fi
+
+# Выводим завершение скрипта
+echo "Good LUCK!"
+```
 
 Время хранения резервной копии:
 
