@@ -30,34 +30,116 @@ gitlab_rails['backup_upload_remote_directory'] = 'gitlab_backups'
 
 # Искомая часть имени контейнера
 search_term="eterinte_gitlab"
+# Папка с бэкапами на сервере (volume)
+backup_volume_path="/home/compose/gitlab/backups"
+# Папка назначения для бэкапов
+backup_dest="/home/ubuntu/gitlab_backups"
+# Папка, которую нужно архивировать
+source_path="/home/compose/gitlab"
+
+# Определяем текущее время для имени архива
+timestamp=$(date +%Y%m%d%H%M)
+backup_filename="${backup_dest}/${timestamp}_gitlab-bu.tar.gz"
+
+# Определяем текущее время до начала создания бэкапа
+current_time=$(date +%s)
 
 # Ищем контейнеры, содержащие искомую часть имени
 container_name=$(docker ps --filter "name=${search_term}" --format "{{.Names}}" | head -n 1)
 
 # Проверяем, найден ли контейнер
 if [ -z "$container_name" ]; then
-echo "Контейнер с именем, содержащим '${search_term}', не найден."
-exit 1
+  echo "Контейнер с именем, содержащим '${search_term}', не найден."
+  exit 1
 fi
 
 # Выводим полное имя контейнера
 echo "Найден контейнер: $container_name"
 
 # Выполняем команду бэкапа в контейнере
-echo "Запуск резервного копирования..."
-backup_output=$(docker exec -t "$container_name" gitlab-rake gitlab:backup:create 2>&1)
+echo "Запуск резервного копирования GitLab..."
+docker exec -t "$container_name" gitlab-rake gitlab:backup:create
 
 # Проверяем статус выполнения команды бэкапа
+if [ $? -ne 0 ]; then
+  echo "Ошибка при создании бэкапа. Скрипт завершен."
+  exit 1
+fi
+
+# Находим самый свежий файл, созданный после начала бэкапа
+backup_file=$(find "$backup_volume_path" -type f -newermt @$current_time -name '*.tar' | head -n 1)
+
+# Проверяем, что файл бэкапа был найден
+if [ -z "$backup_file" ]; then
+  echo "Не удалось найти свежий файл бэкапа."
+  exit 1
+fi
+
+# Выводим имя файла бэкапа
+backup_file_name=$(basename "$backup_file")
+echo "Имя созданного файла бэкапа: $backup_file_name"
+
+# Копируем файл бэкапа в папку назначения
+echo "Копирование файла бэкапа в папку назначения..."
+cp "$backup_file" "$backup_dest/$backup_file_name"
+
+# Проверяем статус выполнения команды копирования
 if [ $? -eq 0 ]; then
-echo "Резервное копирование выполнено успешно."
+  echo "Файл бэкапа успешно скопирован в $backup_dest."
 else
-echo "Ошибка при выполнении резервного копирования."
-echo "$backup_output"
-exit 1
+  echo "Ошибка при копировании файла бэкапа."
+  exit 1
+fi
+
+# Меняем владельца файла на ubuntu:ubuntu
+echo "Изменение владельца файла на ubuntu:ubuntu..."
+chown -R ubuntu:ubuntu "$backup_dest/$backup_file_name"
+
+# Проверяем статус выполнения команды chown
+if [ $? -eq 0 ]; then
+  echo "Владелец файла успешно изменен."
+else
+  echo "Ошибка при изменении владельца файла."
+  exit 1
+fi
+
+# Удаляем файл бэкапа из volume
+echo "Удаление файла бэкапа из папки volume..."
+rm -f "$backup_file"
+
+# Проверяем статус выполнения команды удаления
+if [ $? -eq 0 ]; then
+  echo "Файл бэкапа успешно удален из volume."
+else
+  echo "Ошибка при удалении файла бэкапа из volume."
+  exit 1
+fi
+
+# Создаем архив, исключая ненужные файлы и директории
+echo "Создание архива с исключениями..."
+tar --exclude='*.bak' --exclude='logs' --exclude='data' --exclude='backups' --exclude='html' -czf "$backup_filename" -C "$source_path" .
+
+# Проверяем статус выполнения архивации
+if [ $? -eq 0 ]; then
+  echo "Архив успешно создан: $backup_filename"
+else
+  echo "Ошибка при создании архива."
+  exit 1
+fi
+
+# Меняем владельца архива на ubuntu:ubuntu
+chown -R ubuntu:ubuntu "$backup_filename"
+
+# Проверяем статус выполнения команды chown для архива
+if [ $? -eq 0 ]; then
+  echo "Владелец архива успешно изменен."
+else
+  echo "Ошибка при изменении владельца архива."
+  exit 1
 fi
 
 # Выводим завершение скрипта
-echo "Good LUCK!"
+echo "Скрипт завершен."
 ```
 
 Время хранения резервной копии:
